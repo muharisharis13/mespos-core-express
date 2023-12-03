@@ -6,13 +6,13 @@ class Token {
   createToken(data) {
     if (!data) throw new Error("Data Token is Not Found !");
 
-    return jwt.sign(data, secretToken, { expiresIn: tokenLife });
+    return jwt.sign((data = { data }), secretToken);
   }
 
   createRefreshToken = (data) => {
     if (!data) throw new Error("Data Refresh Token is Not Found !");
 
-    return jwt.sign(data, secretToken);
+    return jwt.sign((data = { data }), secretToken);
   };
 }
 

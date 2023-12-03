@@ -4,12 +4,76 @@ const {
   Outlets,
   sequelize,
 } = require("../../../models");
-// const sequelize = require("sequelize");
 const hash = require("../../../utils/hash");
 const responseJSON = require("../../../utils/responseJSON");
+const { v4: uuidv4 } = require("uuid");
+const { createToken } = require("../../../utils/token/owner");
 
 class authentication {
-  async login(req, res) {}
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    try {
+      const user_account = await User_accounts.findOne({
+        where: {
+          email,
+        },
+        include: {
+          all: true,
+          nested: true,
+        },
+        attributes: {
+          exclude: ["RoleId", "OwnerId"],
+        },
+      });
+
+      if (!user_account) {
+        return responseJSON({
+          res,
+          data: "Email Not Found",
+          status: 400,
+        });
+      }
+
+      const checkPassword = await User_accounts.findOne({
+        where: {
+          email,
+          password: hash(password),
+        },
+      });
+
+      if (!checkPassword) {
+        return responseJSON({
+          res,
+          data: "Password Incorrect !",
+          status: 401,
+        });
+      }
+
+      const token = createToken(user_account);
+
+      return responseJSON({
+        res,
+        data: {
+          user_account,
+          token_type: "bearer",
+          token,
+        },
+        status: 200,
+      });
+    } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
   async register(req, res) {
     const {
       fullname,
@@ -30,6 +94,7 @@ class authentication {
     try {
       const owner = await Owners.create(
         {
+          uuid: uuidv4(),
           fullname,
           country,
           province,
@@ -44,6 +109,7 @@ class authentication {
       );
       const outlet = await Outlets.create(
         {
+          uuid: uuidv4(),
           outlet_name,
           ownerId: owner.id,
         },
@@ -53,10 +119,12 @@ class authentication {
       );
       const user_account = await User_accounts.create(
         {
+          uuid: uuidv4(),
           email,
           password: hash(password),
           status,
           ownerId: owner.id,
+          roleId: 1,
         },
         {
           transaction: t,
@@ -78,7 +146,12 @@ class authentication {
       await t.rollback();
       return responseJSON({
         res,
-        data: error.message,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
         status: 500,
       });
     }

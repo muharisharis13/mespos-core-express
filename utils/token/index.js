@@ -1,5 +1,5 @@
-const tokenUser = require("./user");
+const tokenOwner = require("./owner");
 
 module.exports = {
-  tokenUser,
+  tokenOwner,
 };
