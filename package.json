@@ -1,5 +1,5 @@
 {
-  "name": "ESTAFIT-SERVER",
+  "name": "mespos-core-express",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
