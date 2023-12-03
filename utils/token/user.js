@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const secretToken = process.env.TOKEN_SECURITY;
 const tokenLife = "1m"; // 1 menit
-class userToken {
+class Token {
   createToken(data) {
     if (!data) throw new Error("Data Token is Not Found !");
 
@@ -16,4 +16,4 @@ class userToken {
   };
 }
 
-module.exports = new userToken();
+module.exports = new Token();

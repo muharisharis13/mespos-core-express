@@ -1,8 +1,9 @@
 "use strict";
 /** @type {import('sequelize-cli').Migration} */
+const { v4: uuidv4 } = require("uuid");
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("Owners", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,6 +12,7 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
+        defaultValue: uuidv4(),
         allowNull: false,
         unique: true,
       },
@@ -18,39 +20,23 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      birthdate: {
-        type: Sequelize.DATE,
-        defaultValue: null,
-      },
-      phoneNumber: {
+      country: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
       },
-      password: {
+      province: {
         type: Sequelize.STRING,
-        allowNull: false,
       },
-      token: {
+      city: {
+        type: Sequelize.STRING,
+      },
+      address: {
         type: Sequelize.TEXT,
-        defaultValue: null,
       },
-      tokenRefresh: {
-        type: Sequelize.TEXT,
-        defaultValue: null,
-      },
-      referral: {
+      district: {
         type: Sequelize.STRING,
-        defaultValue: null,
-        unique: true,
       },
-      height: {
+      sub_district: {
         type: Sequelize.STRING,
-        defaultValue: null,
-      },
-      weight: {
-        type: Sequelize.STRING,
-        defaultValue: null,
       },
       createdAt: {
         allowNull: false,
@@ -63,6 +49,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("Owners");
   },
 };
