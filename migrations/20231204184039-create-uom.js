@@ -1,9 +1,8 @@
 "use strict";
 /** @type {import('sequelize-cli').Migration} */
-const { v4: uuidv4 } = require("uuid");
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("User_accounts", {
+    await queryInterface.createTable("uoms", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,17 +11,20 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
-        defaultValue: uuidv4(),
-        allowNull: false,
         unique: true,
+        allowNull: false,
       },
-      email: {
+      uom_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      password: {
+      uom_identifier: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      descriptions: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
       ownerId: {
         type: Sequelize.INTEGER,
@@ -31,18 +33,6 @@ module.exports = {
           model: "owners",
           key: "id",
         },
-      },
-      status: {
-        type: Sequelize.ENUM("active", "non-active"),
-        defaultValue: "active",
-      },
-      roleId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      avatar: {
-        type: Sequelize.TEXT,
-        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -55,6 +45,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("User_accounts");
+    await queryInterface.dropTable("uoms");
   },
 };

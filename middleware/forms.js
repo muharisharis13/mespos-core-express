@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, param } = require("express-validator");
 
 exports.registerValidator = [
   body("fullname", "fullname is required").not().isEmpty(),
@@ -24,7 +24,24 @@ exports.categoryValidator = [
   body("category_identifier", "category_identifier is required")
     .not()
     .isEmpty(),
-  body("ownerId", "ownerId is required").not().isEmpty(),
+];
+
+exports.categoryValidatorDetail = [
+  body("category_name", "category_name is required").not().isEmpty(),
+  body("category_identifier", "category_identifier is required")
+    .not()
+    .isEmpty(),
+  param("uuid", "uuid is required").not().isEmpty(),
+];
+
+exports.uomValidation = [
+  body("uom_name", "uom_name is required").not().isEmpty(),
+  body("uom_identifier", "uom_identifier is required").not().isEmpty(),
+];
+exports.uomValidationDetail = [
+  body("uom_name", "uom_name is required").not().isEmpty(),
+  body("uom_identifier", "uom_identifier is required").not().isEmpty(),
+  param("uuid", "uuid is required").not().isEmpty(),
 ];
 
 exports.validate = (validations) => {

@@ -1,22 +1,9 @@
-const { categories, sequelize } = require("../../../models");
+const { uom, sequelize } = require("../../../models");
 const responseJSON = require("../../../utils/responseJSON");
 const { v4: uuidv4 } = require("uuid");
 const { decodeTokenOwner } = require("../../../utils/token/decodeToken");
 const { Op } = require("sequelize");
-
-const paginate = (query) => {
-  let page = query.page ? parseInt(query.page) - 1 : 0;
-  page = page < 0 ? 0 : page;
-  let limit = parseInt(query.limit || 10);
-  limit = limit < 0 ? 10 : limit;
-  const offset = parseInt(page) * parseInt(limit);
-
-  return {
-    offset,
-    limit,
-  };
-};
-
+const { paginate } = require("../../../utils/pagination");
 const filterQuery = (query) => {
   delete query.page;
   delete query.pageSize;
@@ -31,27 +18,27 @@ const filterQuery = (query) => {
   return newObj;
 };
 
-class categoriesClass {
-  async deleteCategories(req, res) {
+class uomcontroller {
+  async deleteUom(req, res) {
     const { uuid } = req.params;
     try {
       const decodeToken = decodeTokenOwner(req);
-      const getCategory = await categories.findOne({
+      const getUom = await uom.findOne({
         where: {
           ownerId: decodeToken?.ownerId,
           uuid,
         },
       });
 
-      if (!getCategory) {
+      if (!getUom) {
         return responseJSON({
           res,
-          data: "Categories does not exists",
+          data: "Uom does not exists",
           status: 400,
         });
       }
 
-      await getCategory.destroy();
+      await getUom.destroy();
 
       return responseJSON({
         res,
@@ -71,35 +58,35 @@ class categoriesClass {
       });
     }
   }
-  async updateCategories(req, res) {
+  async updateUom(req, res) {
     const { uuid } = req.params;
-    const { category_name, category_identifier, descriptions } = req.body;
+    const { uom_name, uom_identifier, descriptions } = req.body;
     try {
       const decodeToken = decodeTokenOwner(req);
-      const getCategory = await categories.findOne({
+      const getUom = await uom.findOne({
         where: {
           ownerId: decodeToken?.ownerId,
           uuid,
         },
       });
 
-      if (!getCategory) {
+      if (!getUom) {
         return responseJSON({
           res,
-          data: "Categories does not exists",
+          data: "Uom does not exists",
           status: 400,
         });
       }
 
-      const updateCategory = await getCategory.update({
-        category_name,
-        category_identifier,
+      const updateuom = await getUom.update({
+        uom_name,
+        uom_identifier,
         descriptions,
       });
 
       return responseJSON({
         res,
-        data: updateCategory,
+        data: updateuom,
         status: 200,
       });
     } catch (error) {
@@ -115,17 +102,17 @@ class categoriesClass {
       });
     }
   }
-  async getCategory(req, res) {
+  async getUomPaginate(req, res) {
     const { page = 1, pageSize = 1 } = req.query;
 
     try {
       const decodeToken = decodeTokenOwner(req);
-      const category = await categories.findAndCountAll({
+      const getUom = await uom.findAndCountAll({
         limit: paginate(req.query).limit,
         offset: paginate(req.query).offset,
         order: [["id", "DESC"]],
         attributes: {
-          exclude: ["RoleId", "OwnerId"],
+          exclude: ["OwnerId"],
         },
         include: {
           all: true,
@@ -144,7 +131,7 @@ class categoriesClass {
           limit: paginate(req.query).limit,
           pageSize: parseInt(pageSize),
           query: req.query,
-          ...category,
+          ...getUom,
         },
         status: 200,
       });
@@ -161,16 +148,16 @@ class categoriesClass {
       });
     }
   }
-  async add(req, res) {
-    const { category_name, category_identifier, descriptions } = req.body;
+  async createUom(req, res) {
+    const { uom_name, uom_identifier, descriptions } = req.body;
     const t = await sequelize.transaction();
     const decodeToken = decodeTokenOwner(req);
     try {
-      const category = await categories.create(
+      const createUom = await uom.create(
         {
           uuid: uuidv4(),
-          category_name,
-          category_identifier,
+          uom_name,
+          uom_identifier,
           descriptions,
           ownerId: decodeToken?.ownerId,
         },
@@ -183,7 +170,7 @@ class categoriesClass {
 
       return responseJSON({
         res,
-        data: category,
+        data: createUom,
         status: 200,
       });
     } catch (error) {
@@ -201,4 +188,4 @@ class categoriesClass {
   }
 }
 
-module.exports = new categoriesClass();
+module.exports = new uomcontroller();
