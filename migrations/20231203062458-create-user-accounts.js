@@ -8,7 +8,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER(10),
       },
       uuid: {
         type: Sequelize.UUID,
@@ -28,9 +28,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "owners",
-          key: "id",
+          model: "Owners", // name of Target model
+          key: "id", // key in Target model that we're referencing
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE", // or 'SET NULL' or 'RESTRICT'
       },
       status: {
         type: Sequelize.ENUM("active", "non-active"),
@@ -39,6 +41,12 @@ module.exports = {
       roleId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: "Roles", // name of Target model
+          key: "id", // key in Target model that we're referencing
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       avatar: {
         type: Sequelize.TEXT,

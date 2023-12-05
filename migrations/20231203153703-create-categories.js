@@ -7,7 +7,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER(10),
       },
       uuid: {
         type: Sequelize.UUID,
@@ -20,8 +20,8 @@ module.exports = {
       },
       category_identifier: {
         type: Sequelize.STRING,
-        unique: true,
         allowNull: false,
+        unique: false,
       },
       display: {
         type: Sequelize.BOOLEAN,
@@ -34,9 +34,11 @@ module.exports = {
       ownerId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "owners",
+          model: "Owners",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE", // or 'SET NULL' or 'RESTRICT'
       },
       createdAt: {
         allowNull: false,
