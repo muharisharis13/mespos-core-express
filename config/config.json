@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "muharis2",
+    "username": "muharis",
     "password": "muharis",
-    "database": "mespos_db2",
-    "host": "muharis.mesproject.id",
+    "database": "mespos_db_latihan",
+    "host": "home-server.mesproject.id",
     "dialect": "mysql"
   },
   "test": {

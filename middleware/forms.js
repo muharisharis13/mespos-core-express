@@ -50,6 +50,11 @@ exports.productFormValidation = [
   body("categoryId", "categoryId is required").not().isEmpty(),
   body("uomId", "uomId is required").not().isEmpty(),
 ];
+exports.supplierFormValidation = [
+  body("supplier_name", "supplier_name is required").not().isEmpty(),
+  body("phone", "phone is required").not().isEmpty(),
+  body("address_1", "address_1 is required").not().isEmpty(),
+];
 
 exports.validate = (validations) => {
   return async (req, res, next) => {
