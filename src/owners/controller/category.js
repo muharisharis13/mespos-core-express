@@ -129,7 +129,9 @@ class categoriesClass {
         },
         include: {
           all: true,
-          nested: true,
+          attributes: {
+            exclude: ["id"],
+          },
         },
         where: {
           ownerId: decodeToken?.ownerId,

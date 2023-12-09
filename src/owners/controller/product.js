@@ -1,9 +1,18 @@
-const { uom, sequelize } = require("../../../models");
+const {
+  product,
+  selling_unit,
+  sequelize,
+  Owners,
+  Outlets,
+  categories,
+} = require("../../../models");
 const responseJSON = require("../../../utils/responseJSON");
 const { v4: uuidv4 } = require("uuid");
 const { decodeTokenOwner } = require("../../../utils/token/decodeToken");
 const { Op } = require("sequelize");
+const Sequelize = require("sequelize");
 const { paginate } = require("../../../utils/pagination");
+
 const filterQuery = (query) => {
   delete query.page;
   delete query.pageSize;
@@ -17,32 +26,26 @@ const filterQuery = (query) => {
 
   return newObj;
 };
-
-class uomcontroller {
-  async deleteUom(req, res) {
+class productController {
+  async updateDetailProduct(req, res) {
     const { uuid } = req.params;
+    const {} = req.body;
+  }
+  async getDetailProduct(req, res) {
+    const { uuid } = req.params;
+
     try {
       const decodeToken = decodeTokenOwner(req);
-      const getUom = await uom.findOne({
+      const getDetailSellingUnit = await selling_unit.findOne({
         where: {
-          ownerId: decodeToken?.ownerId,
           uuid,
+          ["$product.ownerId$"]: decodeToken?.ownerId,
         },
       });
 
-      if (!getUom) {
-        return responseJSON({
-          res,
-          data: "Uom does not exists",
-          status: 400,
-        });
-      }
-
-      await getUom.destroy();
-
       return responseJSON({
         res,
-        data: "Successfully deleted data ",
+        data: getDetailSellingUnit,
         status: 200,
       });
     } catch (error) {
@@ -58,72 +61,20 @@ class uomcontroller {
       });
     }
   }
-  async updateUom(req, res) {
-    const { uuid } = req.params;
-    const { uom_name, uom_identifier, descriptions } = req.body;
-    try {
-      const decodeToken = decodeTokenOwner(req);
-      const getUom = await uom.findOne({
-        where: {
-          ownerId: decodeToken?.ownerId,
-          uuid,
-        },
-      });
-
-      if (!getUom) {
-        return responseJSON({
-          res,
-          data: "Uom does not exists",
-          status: 400,
-        });
-      }
-
-      const updateuom = await getUom.update({
-        uom_name,
-        uom_identifier,
-        descriptions,
-      });
-
-      return responseJSON({
-        res,
-        data: updateuom,
-        status: 200,
-      });
-    } catch (error) {
-      return responseJSON({
-        res,
-        data:
-          error.errors?.map((item) => ({
-            message: item.message,
-          })) ||
-          error.message ||
-          error,
-        status: 500,
-      });
-    }
-  }
-  async getUomPaginate(req, res) {
+  async getPaginateProduct(req, res) {
     const { page = 1, pageSize = 1 } = req.query;
 
     try {
       const decodeToken = decodeTokenOwner(req);
-      const getUom = await uom.findAndCountAll({
+      let getProduct = await product.findAndCountAll({
         limit: paginate(req.query).limit,
         offset: paginate(req.query).offset,
         order: [["id", "DESC"]],
-        attributes: {
-          exclude: ["OwnerId"],
-        },
-        include: {
-          all: true,
-          attributes: {
-            exclude: ["id"],
-          },
-        },
         where: {
-          ownerId: decodeToken?.ownerId,
+          // ["$product.ownerId$"]: decodeToken?.ownerId,
           ...filterQuery(req.query),
         },
+        // include: [selling_unit, Owners, Outlets, categories],
       });
 
       return responseJSON({
@@ -133,7 +84,7 @@ class uomcontroller {
           limit: paginate(req.query).limit,
           pageSize: parseInt(pageSize),
           query: req.query,
-          ...getUom,
+          ...getProduct,
         },
         status: 200,
       });
@@ -150,18 +101,57 @@ class uomcontroller {
       });
     }
   }
-  async createUom(req, res) {
-    const { uom_name, uom_identifier, descriptions } = req.body;
+  async createProduct(req, res) {
+    const {
+      outletId,
+      product_name,
+      categoryId,
+      status,
+      sku,
+      descriptions,
+      on_expired,
+      is_searchable,
+      selling_price,
+      price,
+      whosale_price,
+      uomId,
+      stock,
+      min_stock,
+      is_enabled_min_stock,
+    } = req.body;
     const t = await sequelize.transaction();
-    const decodeToken = decodeTokenOwner(req);
+
     try {
-      const createUom = await uom.create(
+      const decodeToken = decodeTokenOwner(req);
+      const createProduct = await product.create(
         {
           uuid: uuidv4(),
-          uom_name,
-          uom_identifier,
+          product_name,
+          outletId,
+          categoryId,
+          status,
+          sku,
           descriptions,
+          on_expired,
+          is_searchable,
           ownerId: decodeToken?.ownerId,
+        },
+        {
+          transaction: t,
+        }
+      );
+
+      const createSellingUnit = await selling_unit.create(
+        {
+          uuid: uuidv4(),
+          productId: createProduct.id,
+          selling_price,
+          price,
+          whosale_price,
+          uomId,
+          stock,
+          min_stock,
+          is_enabled_min_stock,
         },
         {
           transaction: t,
@@ -172,7 +162,10 @@ class uomcontroller {
 
       return responseJSON({
         res,
-        data: createUom,
+        data: {
+          product: createProduct,
+          selling_unit: createSellingUnit,
+        },
         status: 200,
       });
     } catch (error) {
@@ -190,4 +183,4 @@ class uomcontroller {
   }
 }
 
-module.exports = new uomcontroller();
+module.exports = new productController();

@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Owners);
+      this.belongsTo(models.Owners, {
+        as: "owner",
+      });
     }
   }
   categories.init(

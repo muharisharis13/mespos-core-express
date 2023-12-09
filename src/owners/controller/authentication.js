@@ -20,7 +20,6 @@ class authentication {
         },
         include: {
           all: true,
-          nested: true,
         },
         attributes: {
           exclude: ["RoleId", "OwnerId"],

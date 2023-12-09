@@ -8,7 +8,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER,
       },
       uuid: {
         type: Sequelize.UUID,
@@ -17,14 +17,14 @@ module.exports = {
         unique: true,
       },
       ownerId: {
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: "Owners",
           key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'SET NULL' or 'RESTRICT'
+        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
       },
       outlet_name: {
         type: Sequelize.STRING,

@@ -44,6 +44,13 @@ exports.uomValidationDetail = [
   param("uuid", "uuid is required").not().isEmpty(),
 ];
 
+exports.productFormValidation = [
+  body("outletId", "outletId is required").not().isEmpty(),
+  body("product_name", "product_name is required").not().isEmpty(),
+  body("categoryId", "categoryId is required").not().isEmpty(),
+  body("uomId", "uomId is required").not().isEmpty(),
+];
+
 exports.validate = (validations) => {
   return async (req, res, next) => {
     for (let validation of validations) {

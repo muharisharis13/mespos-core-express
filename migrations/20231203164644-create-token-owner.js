@@ -27,7 +27,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         references: { model: "User_accounts", key: "id" },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'SET NULL' or 'RESTRICT'
+        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
       },
       createdAt: {
         allowNull: false,

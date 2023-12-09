@@ -1,56 +1,69 @@
 "use strict";
 /** @type {import('sequelize-cli').Migration} */
-const { v4: uuidv4 } = require("uuid");
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("User_accounts", {
+    await queryInterface.createTable("products", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER,
       },
       uuid: {
         type: Sequelize.UUID,
-        defaultValue: uuidv4(),
-        allowNull: false,
         unique: true,
+        allowNull: false,
       },
-      email: {
+      outletId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Outlets",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+        allowNull: false,
+      },
+      product_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      password: {
-        type: Sequelize.STRING,
+      categoryId: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: "categories",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       ownerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "Owners", // name of Target model
-          key: "id", // key in Target model that we're referencing
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
-      },
-      status: {
-        type: Sequelize.ENUM("active", "non-active"),
-        defaultValue: "active",
-      },
-      roleId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Roles", // name of Target model
-          key: "id", // key in Target model that we're referencing
+          model: "Owners",
+          key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      avatar: {
+      status: {
+        type: Sequelize.ENUM("on_sale", "hidden"),
+        defaultValue: "hidden",
+      },
+      sku: {
         type: Sequelize.TEXT,
-        allowNull: true,
+      },
+      descriptions: {
+        type: Sequelize.TEXT,
+      },
+      on_expired: {
+        type: Sequelize.DATE,
+      },
+      is_searchable: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
       },
       createdAt: {
         allowNull: false,
@@ -63,6 +76,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("User_accounts");
+    await queryInterface.dropTable("products");
   },
 };
