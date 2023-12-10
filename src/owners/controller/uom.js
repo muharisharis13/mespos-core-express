@@ -132,6 +132,7 @@ class uomcontroller {
           page: parseInt(page),
           limit: paginate(req.query).limit,
           pageSize: parseInt(pageSize),
+          totalPages: Math.ceil(getProduct.count / paginate(req.query).limit),
           query: req.query,
           ...getUom,
         },
