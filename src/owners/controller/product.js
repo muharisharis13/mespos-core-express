@@ -36,7 +36,7 @@ class productController {
 
     try {
       const decodeToken = decodeTokenOwner(req);
-      const getDetailSellingUnit = await selling_unit.findOne({
+      const getDetailSellingUnit = await product.findOne({
         where: {
           uuid,
           ["$product.ownerId$"]: decodeToken?.ownerId,
@@ -114,18 +114,20 @@ class productController {
       descriptions,
       on_expired,
       is_searchable,
-      selling_price,
-      price,
-      whosale_price,
-      uomId,
-      stock,
-      min_stock,
-      is_enabled_min_stock,
+
+      selling_units,
     } = req.body;
     const t = await sequelize.transaction();
 
     try {
       const decodeToken = decodeTokenOwner(req);
+      if (!Array.isArray(selling_units)) {
+        return responseJSON({
+          res,
+          data: "selling_units must be array",
+          status: 400,
+        });
+      }
       const createProduct = await product.create(
         {
           uuid: uuidv4(),
@@ -144,22 +146,30 @@ class productController {
         }
       );
 
-      const createSellingUnit = await selling_unit.create(
-        {
-          uuid: uuidv4(),
+      for (let i = 0; i < selling_units.length; i++) {
+        await selling_unit.create(
+          {
+            uuid: uuidv4(),
+            productId: createProduct.id,
+            selling_price: selling_units[i].selling_price,
+            price: selling_units[i].price,
+            whosale_price: selling_units[i].whosale_price,
+            uomId: selling_units[i].uomId,
+            stock: selling_units[i].stock,
+            min_stock: selling_units[i].min_stock,
+            is_enabled_min_stock: selling_units[i].is_enabled_min_stock,
+          },
+          {
+            transaction: t,
+          }
+        );
+      }
+
+      const getSellingUnits = await selling_unit.findAll({
+        where: {
           productId: createProduct.id,
-          selling_price,
-          price,
-          whosale_price,
-          uomId,
-          stock,
-          min_stock,
-          is_enabled_min_stock,
         },
-        {
-          transaction: t,
-        }
-      );
+      });
 
       await t.commit();
 
@@ -167,7 +177,6 @@ class productController {
         res,
         data: {
           product: createProduct,
-          selling_unit: createSellingUnit,
         },
         status: 200,
       });

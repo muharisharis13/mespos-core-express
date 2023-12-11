@@ -48,7 +48,7 @@ exports.productFormValidation = [
   body("outletId", "outletId is required").not().isEmpty(),
   body("product_name", "product_name is required").not().isEmpty(),
   body("categoryId", "categoryId is required").not().isEmpty(),
-  body("uomId", "uomId is required").not().isEmpty(),
+  body("selling_units", "selling_units is required").not().isEmpty(),
 ];
 exports.supplierFormValidation = [
   body("supplier_name", "supplier_name is required").not().isEmpty(),
