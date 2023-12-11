@@ -19,7 +19,7 @@ const paginate = (query) => {
 
 const filterQuery = (query) => {
   delete query.page;
-  delete query.pageSize;
+  delete query.limit;
   let newObj = {};
 
   for (let [k, v] of Object.entries(query)) {
@@ -32,6 +32,44 @@ const filterQuery = (query) => {
 };
 
 class categoriesClass {
+  async getDetailCategories(req, res) {
+    const { uuid } = req.params;
+
+    try {
+      const decodeToken = decodeTokenOwner(req);
+      const getCategory = await categories.findOne({
+        where: {
+          ownerId: decodeToken?.ownerId,
+          uuid,
+        },
+      });
+
+      if (!getCategory) {
+        return responseJSON({
+          res,
+          data: "Categories does not exists",
+          status: 400,
+        });
+      }
+
+      return responseJSON({
+        res,
+        data: getCategory,
+        status: 200,
+      });
+    } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
   async deleteCategories(req, res) {
     const { uuid } = req.params;
     try {
@@ -116,12 +154,12 @@ class categoriesClass {
     }
   }
   async getCategory(req, res) {
-    const { page = 1, pageSize = 1 } = req.query;
+    const { page = 1, limit = 1 } = req.query;
 
     try {
       const decodeToken = decodeTokenOwner(req);
       const category = await categories.findAndCountAll({
-        limit: paginate(req.query).limit,
+        limit: parseInt(limit),
         offset: paginate(req.query).offset,
         order: [["id", "DESC"]],
         attributes: {
@@ -143,11 +181,8 @@ class categoriesClass {
         res,
         data: {
           page: parseInt(page),
-          limit: paginate(req.query).limit,
-          pageSize: parseInt(pageSize),
-          totalPages: Math.ceil(
-            getProduct.count / parseInt(paginate(req.query).limit)
-          ),
+          limit: limit,
+          totalPages: Math.ceil(category.count / parseInt(limit)),
           query: req.query,
           ...category,
         },

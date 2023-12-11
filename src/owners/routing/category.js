@@ -25,6 +25,11 @@ router.put(
   validate(categoryValidatorDetail),
   categoryController.updateCategories
 );
+router.get(
+  "/:uuid",
+  tokenMiddleware.isHaveTokenOwner,
+  categoryController.getDetailCategories
+);
 router.delete(
   "/:uuid",
   tokenMiddleware.isHaveTokenOwner,

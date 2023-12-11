@@ -26,6 +26,15 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "categories",
+      defaultScope: {
+        include: {
+          all: true,
+          nested: true,
+          attributes: {
+            exclude: ["id"],
+          },
+        },
+      },
     }
   );
   return categories;

@@ -15,7 +15,7 @@ const { paginate } = require("../../../utils/pagination");
 
 const filterQuery = (query) => {
   delete query.page;
-  delete query.pageSize;
+  delete query.limit;
   let newObj = {};
 
   for (let [k, v] of Object.entries(query)) {
@@ -62,16 +62,16 @@ class productController {
     }
   }
   async getPaginateProduct(req, res) {
-    const { page = 1, pageSize = 1 } = req.query;
+    const { page = 1, limit = 10 } = req.query;
 
     try {
       const decodeToken = decodeTokenOwner(req);
       let getProduct = await product.findAndCountAll({
-        limit: paginate(req.query).limit,
+        limit: parseInt(limit),
         offset: paginate(req.query).offset,
         order: [["id", "DESC"]],
         where: {
-          // ["$product.ownerId$"]: decodeToken?.ownerId,
+          ["$product.ownerId$"]: decodeToken?.ownerId,
           ...filterQuery(req.query),
         },
         // include: [selling_unit, Owners, Outlets, categories],
@@ -81,11 +81,8 @@ class productController {
         res,
         data: {
           page: parseInt(page),
-          limit: paginate(req.query).limit,
-          pageSize: parseInt(pageSize),
-          totalPages: Math.ceil(
-            getProduct.count / parseInt(paginate(req.query).limit)
-          ),
+          limit: limit,
+          totalPages: Math.ceil(parseInt(getProduct.count) / parseInt(limit)),
           query: req.query,
           ...getProduct,
         },
