@@ -44,6 +44,10 @@ exports.uomValidationDetail = [
   param("uuid", "uuid is required").not().isEmpty(),
 ];
 
+exports.productStatusValidation = [
+  body("status", "status is required").not().isEmpty(),
+];
+
 exports.productFormValidation = [
   body("outletId", "outletId is required").not().isEmpty(),
   body("product_name", "product_name is required").not().isEmpty(),

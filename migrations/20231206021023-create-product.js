@@ -51,6 +51,9 @@ module.exports = {
       status: {
         type: Sequelize.ENUM("on_sale", "hidden"),
         defaultValue: "hidden",
+        validate: {
+          isIn: [["on_sale", "hidden"]],
+        },
       },
       sku: {
         type: Sequelize.TEXT,

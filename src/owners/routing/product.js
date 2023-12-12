@@ -1,6 +1,7 @@
 const {
   validate,
   productFormValidation,
+  productStatusValidation,
 } = require("../../../middleware/forms");
 const productController = require("../controller/product");
 const express = require("express");
@@ -13,6 +14,12 @@ router.post(
   validate(productFormValidation),
   productController.createProduct
 );
+router.post(
+  "/status/:uuid",
+  tokenMiddleware.isHaveTokenOwner,
+  validate(productStatusValidation),
+  productController.changeStatusProduct
+);
 router.get(
   "/",
   tokenMiddleware.isHaveTokenOwner,
@@ -22,6 +29,11 @@ router.get(
   "/:uuid",
   tokenMiddleware.isHaveTokenOwner,
   productController.getDetailProduct
+);
+router.delete(
+  "/:uuid",
+  tokenMiddleware.isHaveTokenOwner,
+  productController.deleteProduct
 );
 
 module.exports = router;

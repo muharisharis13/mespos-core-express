@@ -27,9 +27,85 @@ const filterQuery = (query) => {
   return newObj;
 };
 class productController {
-  async updateDetailProduct(req, res) {
+  async deleteProduct(req, res) {
     const { uuid } = req.params;
-    const {} = req.body;
+
+    try {
+      const getSellingUnit = await selling_unit.destroy({
+        where: {
+          productId: uuid,
+        },
+      });
+      const deleteProduct = await product.destroy({
+        where: {
+          id: uuid,
+        },
+      });
+
+      if (!deleteProduct) {
+        return responseJSON({
+          res,
+          data: "Product Not Found",
+          status: 400,
+        });
+      }
+      return responseJSON({
+        res,
+        data: { deleteProduct, getSellingUnit },
+        status: 200,
+      });
+    } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
+  async changeStatusProduct(req, res) {
+    const { uuid } = req.params;
+    const { status } = req.body;
+
+    try {
+      const getDetailProduct = await product.findOne({
+        where: {
+          uuid,
+        },
+      });
+
+      if (!getDetailProduct) {
+        return responseJSON({
+          res,
+          data: "Product Not Found",
+          status: 400,
+        });
+      }
+      const updateProduct = await getDetailProduct.update({
+        status: status,
+      });
+
+      return responseJSON({
+        res,
+        data: updateProduct,
+        status: 200,
+      });
+    } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
   }
   async getDetailProduct(req, res) {
     const { uuid } = req.params;
@@ -174,10 +250,12 @@ class productController {
         res,
         data: {
           product: createProduct,
+          selling_unit: getSellingUnits,
         },
         status: 200,
       });
     } catch (error) {
+      await t.rollback();
       return responseJSON({
         res,
         data:
