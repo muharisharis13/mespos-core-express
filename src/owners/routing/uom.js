@@ -26,5 +26,10 @@ router.delete(
   tokenMiddleware.isHaveTokenOwner,
   uomController.deleteUom
 );
+router.get(
+  "/:uuid",
+  tokenMiddleware.isHaveTokenOwner,
+  uomController.getDetailUOM
+);
 
 module.exports = router;

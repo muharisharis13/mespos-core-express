@@ -23,6 +23,15 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "uom",
+      defaultScope: {
+        include: {
+          all: true,
+          nested: true,
+          attributes: {
+            exclude: ["id"],
+          },
+        },
+      },
     }
   );
   return uom;

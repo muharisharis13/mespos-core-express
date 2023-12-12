@@ -6,7 +6,7 @@ const { Op } = require("sequelize");
 const { paginate } = require("../../../utils/pagination");
 const filterQuery = (query) => {
   delete query.page;
-  delete query.pageSize;
+  delete query.limit;
   let newObj = {};
 
   for (let [k, v] of Object.entries(query)) {
@@ -19,6 +19,43 @@ const filterQuery = (query) => {
 };
 
 class uomcontroller {
+  async getDetailUOM(req, res) {
+    const { uuid } = req.params;
+    try {
+      const decodeToken = decodeTokenOwner(req);
+      const getUom = await uom.findOne({
+        where: {
+          ownerId: decodeToken?.ownerId,
+          uuid,
+        },
+      });
+
+      if (!getUom) {
+        return responseJSON({
+          res,
+          data: "Uom does not exists",
+          status: 400,
+        });
+      }
+
+      return responseJSON({
+        res,
+        data: getUom,
+        status: 200,
+      });
+    } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
   async deleteUom(req, res) {
     const { uuid } = req.params;
     try {
@@ -103,7 +140,7 @@ class uomcontroller {
     }
   }
   async getUomPaginate(req, res) {
-    const { page = 1, pageSize = 1 } = req.query;
+    const { page = 1 } = req.query;
 
     try {
       const decodeToken = decodeTokenOwner(req);
@@ -131,9 +168,8 @@ class uomcontroller {
         data: {
           page: parseInt(page),
           limit: paginate(req.query).limit,
-          pageSize: parseInt(pageSize),
           totalPages: Math.ceil(
-            getProduct.count / parseInt(paginate(req.query).limit)
+            getUom.count / parseInt(paginate(req.query).limit)
           ),
           query: req.query,
           ...getUom,
