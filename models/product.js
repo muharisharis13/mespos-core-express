@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Owners, { as: "owner" });
+      // this.belongsTo(models.Owners, { as: "owner" });
       this.belongsTo(models.Outlets, { as: "outlet" });
       this.belongsTo(models.categories, { as: "category" });
       this.hasMany(models.selling_unit, { foreignKey: "productId" });
@@ -31,14 +31,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "product",
-      defaultScope: {
-        attributes: { exclude: ["OwnerId", "OutletId"] },
-        include: {
-          all: true,
-          nested: true,
-          attributes: { exclude: ["id", "OwnerId"] },
-        },
-      },
     }
   );
   return product;

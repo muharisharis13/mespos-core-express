@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Owners, {
         as: "owner",
       });
+      this.hasMany(models?.product, {
+        foreignKey: "categoryId",
+        as: "product",
+      });
     }
   }
   categories.init(
@@ -26,15 +30,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "categories",
-      defaultScope: {
-        include: {
-          all: true,
-          nested: true,
-          attributes: {
-            exclude: ["id"],
-          },
-        },
-      },
     }
   );
   return categories;

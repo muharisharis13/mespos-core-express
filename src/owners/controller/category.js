@@ -1,4 +1,4 @@
-const { categories, sequelize } = require("../../../models");
+const { categories, sequelize, product } = require("../../../models");
 const responseJSON = require("../../../utils/responseJSON");
 const { v4: uuidv4 } = require("uuid");
 const { decodeTokenOwner } = require("../../../utils/token/decodeToken");
@@ -162,18 +162,16 @@ class categoriesClass {
         limit: parseInt(limit),
         offset: paginate(req.query).offset,
         order: [["id", "DESC"]],
-        attributes: {
-          exclude: ["RoleId", "OwnerId"],
-        },
-        include: {
-          all: true,
-          attributes: {
-            exclude: ["id"],
-          },
-        },
         where: {
           ownerId: decodeToken?.ownerId,
           ...filterQuery(req.query),
+        },
+        include: {
+          all: true,
+          nested: true,
+          attributes: {
+            exclude: ["id", "selling_units"],
+          },
         },
       });
 

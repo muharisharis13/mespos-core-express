@@ -150,6 +150,11 @@ class productController {
           ["$product.ownerId$"]: decodeToken?.ownerId,
           ...filterQuery(req.query),
         },
+        include: {
+          all: true,
+          nested: true,
+          attributes: { exclude: ["id"] },
+        },
         // include: [selling_unit, Owners, Outlets, categories],
       });
 
