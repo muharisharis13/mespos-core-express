@@ -20,6 +20,7 @@ module.exports = {
           model: "products",
           key: "id",
         },
+        onDelete: "SET NULL",
       },
       price: {
         type: Sequelize.INTEGER,
@@ -39,6 +40,7 @@ module.exports = {
           model: "uoms",
           key: "id",
         },
+        onDelete: "SET NULL",
       },
       stock: {
         type: Sequelize.INTEGER,

@@ -15,19 +15,19 @@ module.exports = {
         unique: true,
       },
       token: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: true,
         unique: true,
       },
       refresh_token: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       userAccountId: {
         type: Sequelize.INTEGER,
         references: { model: "User_accounts", key: "id" },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
+        onDelete: "SET NULL", // or 'CASCADE' or 'RESTRICT'
       },
       createdAt: {
         allowNull: false,

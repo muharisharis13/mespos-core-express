@@ -36,11 +36,12 @@ module.exports = {
       },
       ownerId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "Owners",
           key: "id",
         },
+        onDelete: "SET NULL",
       },
       descriptions: {
         type: Sequelize.TEXT,

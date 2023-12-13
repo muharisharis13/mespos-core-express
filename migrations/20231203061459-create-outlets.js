@@ -18,13 +18,13 @@ module.exports = {
       },
       ownerId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "Owners",
           key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
+        onDelete: "SET NULL", // or 'CASCADE' or 'RESTRICT'
       },
       outlet_name: {
         type: Sequelize.STRING,

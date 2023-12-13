@@ -7,7 +7,14 @@ const categoryController = require("../controller/category");
 const express = require("express");
 const router = express.Router();
 const tokenMiddleware = require("../../../middleware/token");
+const { body } = require("express-validator");
 
+router.post(
+  "/display/:uuid",
+  tokenMiddleware.isHaveTokenOwner,
+  validate([body("display", "display is required").not().isEmpty()]),
+  categoryController.changeDisplay
+);
 router.post(
   "/",
   tokenMiddleware.isHaveTokenOwner,
@@ -33,7 +40,6 @@ router.get(
 router.delete(
   "/:uuid",
   tokenMiddleware.isHaveTokenOwner,
-  validate(categoryValidatorDetail),
   categoryController.deleteCategories
 );
 

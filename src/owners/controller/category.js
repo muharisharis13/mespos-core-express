@@ -32,6 +32,47 @@ const filterQuery = (query) => {
 };
 
 class categoriesClass {
+  async changeDisplay(req, res) {
+    const { uuid } = req.params;
+    const { display } = req.body;
+
+    const t = await sequelize.transaction();
+    try {
+      const updateDisplayCategory = await categories.update(
+        {
+          display,
+        },
+        {
+          where: {
+            uuid,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+
+      t.commit();
+
+      return responseJSON({
+        res,
+        data: updateDisplayCategory,
+        status: 200,
+      });
+    } catch (error) {
+      t.rollback();
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
   async getDetailCategories(req, res) {
     const { uuid } = req.params;
 
@@ -111,7 +152,8 @@ class categoriesClass {
   }
   async updateCategories(req, res) {
     const { uuid } = req.params;
-    const { category_name, category_identifier, descriptions } = req.body;
+    const { category_name, category_identifier, descriptions, display } =
+      req.body;
     try {
       const decodeToken = decodeTokenOwner(req);
       const getCategory = await categories.findOne({
@@ -133,6 +175,7 @@ class categoriesClass {
         category_name,
         category_identifier,
         descriptions,
+        display,
       });
 
       return responseJSON({
@@ -200,7 +243,8 @@ class categoriesClass {
     }
   }
   async add(req, res) {
-    const { category_name, category_identifier, descriptions } = req.body;
+    const { category_name, category_identifier, descriptions, display } =
+      req.body;
     const t = await sequelize.transaction();
     const decodeToken = decodeTokenOwner(req);
     try {
@@ -211,6 +255,7 @@ class categoriesClass {
           category_identifier,
           descriptions,
           ownerId: decodeToken?.ownerId,
+          display,
         },
         {
           transaction: t,

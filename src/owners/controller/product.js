@@ -117,6 +117,11 @@ class productController {
           uuid,
           ["$product.ownerId$"]: decodeToken?.ownerId,
         },
+        include: {
+          all: true,
+          nested: true,
+          attributes: { exclude: ["id"] },
+        },
       });
 
       return responseJSON({

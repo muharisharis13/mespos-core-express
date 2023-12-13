@@ -38,7 +38,7 @@ module.exports = {
           key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
+        onDelete: "SET NULL", // or 'CASCADE' or 'RESTRICT'
       },
       createdAt: {
         allowNull: false,

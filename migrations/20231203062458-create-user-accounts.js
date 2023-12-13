@@ -26,13 +26,13 @@ module.exports = {
       },
       ownerId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "Owners", // name of Target model
           key: "id", // key in Target model that we're referencing
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", // or 'CASCADE' or 'RESTRICT'
+        onDelete: "SET NULL", // or 'CASCADE' or 'RESTRICT'
       },
       status: {
         type: Sequelize.ENUM("active", "non-active"),
@@ -40,13 +40,13 @@ module.exports = {
       },
       roleId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "Roles", // name of Target model
           key: "id", // key in Target model that we're referencing
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
       },
       avatar: {
         type: Sequelize.TEXT,
