@@ -140,7 +140,7 @@ class uomcontroller {
     }
   }
   async getUomPaginate(req, res) {
-    const { page = 1 } = req.query;
+    const { page = 1, limit = 1 } = req.query;
 
     try {
       const decodeToken = decodeTokenOwner(req);
@@ -167,10 +167,8 @@ class uomcontroller {
         res,
         data: {
           page: parseInt(page),
-          limit: paginate(req.query).limit,
-          totalPages: Math.ceil(
-            getUom.count / parseInt(paginate(req.query).limit)
-          ),
+          limit: limit,
+          totalPages: Math.ceil(getUom.count / parseInt(limit)),
           query: req.query,
           ...getUom,
         },

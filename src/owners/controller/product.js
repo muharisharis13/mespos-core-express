@@ -120,7 +120,6 @@ class productController {
         include: {
           all: true,
           nested: true,
-          attributes: { exclude: ["id"] },
         },
       });
 
@@ -175,6 +174,137 @@ class productController {
         status: 200,
       });
     } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
+
+  async updateProduct(req, res) {
+    const { uuid } = req.params;
+    const {
+      outletId,
+      product_name,
+      categoryId,
+      status,
+      sku,
+      descriptions,
+      on_expired,
+      is_searchable,
+      selling_units,
+    } = req.body;
+
+    const t = await sequelize.transaction();
+    try {
+      const decodeToken = decodeTokenOwner(req);
+      if (!Array.isArray(selling_units)) {
+        return responseJSON({
+          res,
+          data: "selling_units must be array",
+          status: 400,
+        });
+      }
+
+      const findOneProduct = await product.findOne({
+        where: {
+          uuid,
+          ownerId: decodeToken?.ownerId,
+        },
+      });
+
+      if (!findOneProduct) {
+        return responseJSON({
+          res,
+          data: "Product NOt Found",
+          status: 400,
+        });
+      }
+
+      const updateProduct = await product.update(
+        {
+          product_name,
+          outletId,
+          categoryId,
+          status,
+          sku,
+          descriptions,
+          on_expired,
+          is_searchable,
+        },
+        {
+          where: {
+            uuid,
+            ownerId: decodeToken?.ownerId,
+          },
+        },
+        {
+          transaction: t,
+        }
+      );
+
+      let updateSellingUnit;
+
+      for (let i = 0; i < selling_units.length; i++) {
+        if (!selling_units[i].uuid) {
+          updateSellingUnit = await selling_unit.create(
+            {
+              uuid: uuidv4(),
+              productId: findOneProduct.id,
+              selling_price: selling_units[i].selling_price,
+              price: selling_units[i].price,
+              whosale_price: selling_units[i].whosale_price,
+              uomId: selling_units[i].uomId,
+              stock: selling_units[i].stock,
+              min_stock: selling_units[i].min_stock,
+              is_enabled_min_stock: selling_units[i].is_enabled_min_stock,
+            },
+            {
+              transaction: t,
+            }
+          );
+        } else {
+          updateSellingUnit = await selling_unit.update(
+            {
+              selling_price: selling_units[i].selling_price,
+              price: selling_units[i].price,
+              whosale_price: selling_units[i].whosale_price,
+              uomId: selling_units[i].uomId,
+              stock: selling_units[i].stock,
+              min_stock: selling_units[i].min_stock,
+              is_enabled_min_stock: selling_units[i].is_enabled_min_stock,
+            },
+            {
+              where: {
+                productId: findOneProduct.id,
+                uuid: selling_units[i].uuid,
+              },
+            },
+            {
+              transaction: t,
+            }
+          );
+        }
+      }
+
+      await t.commit();
+
+      return responseJSON({
+        res,
+        data: {
+          product: updateProduct,
+          selling_unit: updateSellingUnit,
+        },
+        status: 200,
+      });
+    } catch (error) {
+      await t.rollback();
       return responseJSON({
         res,
         data:

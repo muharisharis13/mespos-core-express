@@ -30,6 +30,12 @@ router.get(
   tokenMiddleware.isHaveTokenOwner,
   productController.getDetailProduct
 );
+router.put(
+  "/:uuid",
+  tokenMiddleware.isHaveTokenOwner,
+  validate(productFormValidation),
+  productController.updateProduct
+);
 router.delete(
   "/:uuid",
   tokenMiddleware.isHaveTokenOwner,
