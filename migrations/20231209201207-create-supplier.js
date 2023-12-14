@@ -41,6 +41,7 @@ module.exports = {
           model: "Owners",
           key: "id",
         },
+        onUpdate: "SET NULL",
         onDelete: "SET NULL",
       },
       descriptions: {

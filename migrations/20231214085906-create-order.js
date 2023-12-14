@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("selling_units", {
+    await queryInterface.createTable("orders", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,47 +14,53 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      productId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "products",
-          key: "id",
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL",
-      },
-      price: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      selling_price: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      whosale_price: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      uomId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "uoms",
-          key: "id",
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL",
-      },
-      stock: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      min_stock: {
+      customerId: {
         type: Sequelize.INTEGER,
         allowNull: true,
+        references: {
+          model: "customers",
+          key: "id",
+        },
+        onUpdate: "SET NULL",
+        onDelete: "SET NULL",
       },
-      is_enabled_min_stock: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
+      payment_status: {
+        type: Sequelize.ENUM(
+          "paid",
+          "partially_paid",
+          "voided",
+          "hold",
+          "partially_refund"
+        ),
+      },
+      total_discount: {
+        type: Sequelize.INTEGER,
+      },
+      total_order: {
+        type: Sequelize.INTEGER,
+      },
+      total_refund: {
+        type: Sequelize.INTEGER,
+      },
+      order_type: {
+        type: Sequelize.ENUM("take_away", "dine_in"),
+      },
+      cashierId: {
+        type: Sequelize.INTEGER,
+      },
+      type_discount: {
+        type: Sequelize.ENUM("flat", "percentage"),
+      },
+      order_number: {
+        type: Sequelize.STRING,
+      },
+      ownerId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Owners",
+          key: "id",
+        },
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,
@@ -67,6 +73,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("selling_units");
+    await queryInterface.dropTable("orders");
   },
 };

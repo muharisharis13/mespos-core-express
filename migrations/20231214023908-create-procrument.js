@@ -1,56 +1,62 @@
 "use strict";
 /** @type {import('sequelize-cli').Migration} */
-const { v4: uuidv4 } = require("uuid");
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("User_accounts", {
+    await queryInterface.createTable("procruments", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER(10),
+        type: Sequelize.INTEGER,
       },
       uuid: {
         type: Sequelize.UUID,
-        defaultValue: uuidv4(),
-        allowNull: false,
         unique: true,
+        allowNull: false,
       },
-      email: {
+      procrument_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      password: {
+      invoice_number: {
         type: Sequelize.STRING,
+        allowNull: true,
+      },
+      delivery_time: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      invoice_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      delivery_status: {
+        type: Sequelize.ENUM("pending", "delivered"),
         allowNull: false,
       },
       ownerId: {
         type: Sequelize.INTEGER,
         allowNull: true,
-        references: {
-          model: "Owners", // name of Target model
-          key: "id", // key in Target model that we're referencing
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL", // or 'CASCADE' or 'RESTRICT'
-      },
-      status: {
-        type: Sequelize.ENUM("active", "non-active"),
-        defaultValue: "active",
-      },
-      roleId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "Roles", // name of Target model
-          key: "id", // key in Target model that we're referencing
-        },
         onUpdate: "SET NULL",
         onDelete: "SET NULL",
+        references: {
+          model: "Owners",
+          key: "id",
+        },
       },
-      avatar: {
-        type: Sequelize.TEXT,
+      supplierId: {
+        type: Sequelize.INTEGER,
         allowNull: true,
+        onUpdate: "SET NULL",
+        onDelete: "SET NULL",
+        references: {
+          model: "suppliers",
+          key: "id",
+        },
+      },
+      payment_status: {
+        type: Sequelize.ENUM("paid", "unpadi"),
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -63,6 +69,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("User_accounts");
+    await queryInterface.dropTable("procruments");
   },
 };

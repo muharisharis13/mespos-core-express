@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("products", {
+    await queryInterface.createTable("customers", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,59 +14,31 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
-      outletId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Outlets",
-          key: "id",
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL",
-        allowNull: true,
-      },
-      product_name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      categoryId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "categories",
-          key: "id",
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL",
-      },
       ownerId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
         references: {
           model: "Owners",
           key: "id",
         },
+        allowNull: true,
         onUpdate: "SET NULL",
         onDelete: "SET NULL",
       },
-      status: {
-        type: Sequelize.ENUM("on_sale", "hidden"),
-        defaultValue: "hidden",
-        validate: {
-          isIn: [["on_sale", "hidden"]],
+      balance: {
+        type: Sequelize.INTEGER,
+      },
+      fullname: {
+        type: Sequelize.STRING,
+      },
+      userAccountId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "User_accounts",
+          key: "id",
         },
-      },
-      sku: {
-        type: Sequelize.TEXT,
-      },
-      descriptions: {
-        type: Sequelize.TEXT,
-      },
-      on_expired: {
-        type: Sequelize.DATE,
-      },
-      is_searchable: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
+        allowNull: true,
+        onUpdate: "SET NULL",
+        onDelete: "SET NULL",
       },
       createdAt: {
         allowNull: false,
@@ -79,6 +51,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("products");
+    await queryInterface.dropTable("customers");
   },
 };

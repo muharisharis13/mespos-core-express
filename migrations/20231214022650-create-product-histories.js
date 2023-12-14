@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("products", {
+    await queryInterface.createTable("product_histories", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,62 +11,72 @@ module.exports = {
       },
       uuid: {
         type: Sequelize.UUID,
+        allowNull: false,
         unique: true,
-        allowNull: false,
       },
-      outletId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Outlets",
-          key: "id",
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL",
-        allowNull: true,
-      },
-      product_name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      categoryId: {
+      procrumentId: {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: "categories",
+          model: "procruments",
           key: "id",
         },
         onUpdate: "SET NULL",
         onDelete: "SET NULL",
       },
-      ownerId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: "Owners",
-          key: "id",
-        },
-        onUpdate: "SET NULL",
-        onDelete: "SET NULL",
-      },
-      status: {
-        type: Sequelize.ENUM("on_sale", "hidden"),
-        defaultValue: "hidden",
-        validate: {
-          isIn: [["on_sale", "hidden"]],
-        },
-      },
-      sku: {
-        type: Sequelize.TEXT,
-      },
-      descriptions: {
-        type: Sequelize.TEXT,
-      },
-      on_expired: {
+      order_date: {
         type: Sequelize.DATE,
+        allowNull: true,
       },
-      is_searchable: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
+      userAccountId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "User_accounts",
+          key: "id",
+        },
+        onUpdate: "SET NULL",
+        onDelete: "SET NULL",
+      },
+      initial_stock: {
+        type: Sequelize.INTEGER,
+      },
+      new_stock: {
+        type: Sequelize.INTEGER,
+      },
+      qty: {
+        type: Sequelize.INTEGER,
+      },
+      orderId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "orders",
+          key: "id",
+        },
+        onUpdate: "SET NULL",
+        onDelete: "SET NULL",
+      },
+      operation_type: {
+        type: Sequelize.ENUM(
+          "sold",
+          "deleted",
+          "stocked",
+          "void_return",
+          "stock_return",
+          "added",
+          "lost"
+        ),
+      },
+      sellingUnitId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "selling_units",
+          key: "id",
+        },
+        onUpdate: "SET NULL",
+        onDelete: "SET NULL",
       },
       createdAt: {
         allowNull: false,
@@ -79,6 +89,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("products");
+    await queryInterface.dropTable("product_histories");
   },
 };

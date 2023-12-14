@@ -10,7 +10,6 @@ const responseJSON = require("../../../utils/responseJSON");
 const { v4: uuidv4 } = require("uuid");
 const { decodeTokenOwner } = require("../../../utils/token/decodeToken");
 const { Op } = require("sequelize");
-const Sequelize = require("sequelize");
 const { paginate } = require("../../../utils/pagination");
 
 const filterQuery = (query) => {

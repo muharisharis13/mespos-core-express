@@ -33,7 +33,7 @@ module.exports = {
           model: "Owners",
           key: "id",
         },
-        onUpdate: "CASCADE",
+        onUpdate: "SET NULL",
         onDelete: "SET NULL", // or 'CASCADE' or 'RESTRICT'
       },
       createdAt: {
