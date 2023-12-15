@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.User_accounts, {
+        as: "user_account",
+      });
+      this.belongsTo(models.selling_unit, {
+        as: "selling_unit",
+      });
     }
   }
   product_histories.init(

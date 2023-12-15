@@ -10,5 +10,10 @@ router.post(
   tokenMiddleware.isHaveTokenOwner,
   stockController.createStockAdjustment
 );
+router.get(
+  "/",
+  tokenMiddleware.isHaveTokenOwner,
+  stockController.getStockRecord
+);
 
 module.exports = router;

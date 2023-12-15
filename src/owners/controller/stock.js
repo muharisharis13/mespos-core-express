@@ -6,6 +6,8 @@ const {
 const { v4: uuidv4 } = require("uuid");
 const responseJSON = require("../../../utils/responseJSON");
 const { decodeTokenOwner } = require("../../../utils/token/decodeToken");
+const { paginate } = require("../../../utils/pagination");
+const { Op } = require("sequelize");
 
 const calculateNewQty = (initial_qty, qty, type) => {
   switch (type) {
@@ -18,7 +20,63 @@ const calculateNewQty = (initial_qty, qty, type) => {
   }
 };
 
+const filterQuery = (query) => {
+  delete query.page;
+  delete query.limit;
+  let newObj = {};
+
+  for (let [k, v] of Object.entries(query)) {
+    newObj[`$${k}$`] = {
+      [Op.like]: `%${v ?? "*"}%`,
+    };
+  }
+
+  return newObj;
+};
+
 class stockController {
+  async getStockRecord(req, res) {
+    const { page = 1, limit = 1 } = req.query;
+    try {
+      const decodeToken = decodeTokenOwner(req);
+      const getProductHistories = await product_histories.findAndCountAll({
+        limit: parseInt(limit),
+        offset: paginate(req.query).offset,
+        order: [["id", "DESC"]],
+        include: {
+          all: true,
+          nested: true,
+        },
+        where: {
+          userAccountId: decodeToken?.id,
+          ...filterQuery(req.query),
+        },
+      });
+
+      return responseJSON({
+        res,
+        data: {
+          page: parseInt(page),
+          limit: limit,
+          totalPages: Math.ceil(getProductHistories.count / parseInt(limit)),
+          query: req.query,
+          ...getProductHistories,
+        },
+        status: 200,
+      });
+    } catch (error) {
+      return responseJSON({
+        res,
+        data:
+          error.errors?.map((item) => ({
+            message: item.message,
+          })) ||
+          error.message ||
+          error,
+        status: 500,
+      });
+    }
+  }
   async createStockAdjustment(req, res) {
     const arrBody = req.body;
     const t = await sequelize.transaction();
