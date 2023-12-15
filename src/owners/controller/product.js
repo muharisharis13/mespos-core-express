@@ -156,7 +156,6 @@ class productController {
         include: {
           all: true,
           nested: true,
-          attributes: { exclude: ["id"] },
         },
         // include: [selling_unit, Owners, Outlets, categories],
       });

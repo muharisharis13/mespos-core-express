@@ -6,7 +6,7 @@ const { validate, formStockValidation } = require("../../../middleware/forms");
 const sellingUnitMiddlerware = require("../../../middleware/modules/selling_units");
 
 router.post(
-  "/",
+  "/adjustment",
   tokenMiddleware.isHaveTokenOwner,
   stockController.createStockAdjustment
 );
