@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         "lost"
       ),
       sellingUnitId: DataTypes.INTEGER,
+      price: DataTypes.INTEGER,
     },
     {
       sequelize,

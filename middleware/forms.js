@@ -60,6 +60,14 @@ exports.supplierFormValidation = [
   body("address_1", "address_1 is required").not().isEmpty(),
 ];
 
+exports.formStockValidation = [
+  body("price", "price is required").not().isEmpty(),
+  body("operation_type", "operation_type is required").not().isEmpty(),
+  body("sellingUnitId", "sellingUnitId is required").not().isEmpty(),
+  body("qty", "qty is required").not().isEmpty(),
+  body("initial_qty", "initial_qty is required").not().isEmpty(),
+];
+
 exports.validate = (validations) => {
   return async (req, res, next) => {
     for (let validation of validations) {

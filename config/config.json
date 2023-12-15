@@ -3,7 +3,7 @@
     "username": "muharis",
     "password": "muharis",
     "database": "mespos_db_latihan",
-    "host": "home-server.mesproject.id",
+    "host": "home-server2.mesproject.id",
     "dialect": "mysql"
   },
   "test": {
