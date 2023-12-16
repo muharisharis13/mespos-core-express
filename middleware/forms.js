@@ -68,6 +68,13 @@ exports.formStockValidation = [
   body("initial_qty", "initial_qty is required").not().isEmpty(),
 ];
 
+exports.formPaymentValidation = {
+  payment_name: body("payment_name", "payment_name is required")
+    .not()
+    .isEmpty(),
+  display: body("display", "display is required").not().isEmpty(),
+};
+
 exports.validate = (validations) => {
   return async (req, res, next) => {
     for (let validation of validations) {
