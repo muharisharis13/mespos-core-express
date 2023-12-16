@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       ownerId: DataTypes.INTEGER,
       payment_name: DataTypes.STRING,
       display: DataTypes.BOOLEAN,
+      descriptions: DataTypes.TEXT,
     },
     {
       sequelize,

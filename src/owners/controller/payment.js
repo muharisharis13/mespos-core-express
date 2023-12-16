@@ -102,7 +102,7 @@ class paymentController {
     }
   }
   async createPayment(req, res) {
-    const { payment_name, display } = req.body;
+    const { payment_name, display, descriptions } = req.body;
     const t = await sequelize.transaction();
     const decodeToken = decodeTokenOwner(req);
     try {
@@ -112,6 +112,7 @@ class paymentController {
           payment_name,
           display,
           ownerId: decodeToken?.ownerId,
+          descriptions,
         },
         {
           transaction: t,
